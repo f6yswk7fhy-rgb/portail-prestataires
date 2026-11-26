@@ -1,0 +1,42 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: portail
+          POSTGRES_USER: portail
+          POSTGRES_PASSWORD: portail
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U portail" --health-interval 5s --health-retries 10
+    env:
+      PORTAIL_DEBUG: "1"
+      POSTGRES_DB: portail
+      POSTGRES_USER: portail
+      POSTGRES_PASSWORD: portail
+      POSTGRES_HOST: localhost
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements.txt
+      - run: python manage.py makemigrations --check --dry-run
+      - run: python manage.py test tests
+      - name: Contrôles de déploiement
+        env:
+          PORTAIL_DEBUG: "0"
+          PORTAIL_SECRET_KEY: cle-de-test-uniquement-pour-le-controle-de-deploiement-1234567890
+        run: python manage.py check --deploy --fail-level WARNING

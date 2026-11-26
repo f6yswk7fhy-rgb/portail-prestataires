@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block contenu %}
+<h1>Charte v{{ version.numero }} signée</h1>
+<div class="ok">Signée le {{ signature.signee_le|date:"j F Y à H:i" }}, avec vérification MFA.</div>
+<div class="carte">
+  <p>Empreinte du document signé : <span class="hash">{{ signature.empreinte_document }}</span></p>
+  <p>Preuve de signature : <span class="hash">{{ signature.preuve }}</span></p>
+</div>
+{% endblock %}

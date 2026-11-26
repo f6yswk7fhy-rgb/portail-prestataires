@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block contenu %}
+<h1>Bonjour {{ user.first_name|default:user.email }}</h1>
+{% if user.est_prestataire %}
+  {% if not intervenant %}
+    <p class="alerte">Votre compte n'est rattaché à aucune société prestataire. Contactez votre référent.</p>
+  {% elif not version %}
+    <p class="note">Aucune charte n'est en vigueur pour le moment.</p>
+  {% elif a_signe %}
+    <div class="ok">Vous avez signé la charte v{{ version.numero }} en vigueur.</div>
+    <p class="note">Les demandes d'accès et d'intervention arriveront dans une prochaine version du portail.</p>
+  {% else %}
+    <div class="carte douce">
+      <h2>Signature de la charte requise</h2>
+      <p>Avant toute habilitation, vous devez lire et signer la charte v{{ version.numero }}.</p>
+      <a class="btn pri" href="{% url 'charte:signer' %}">Lire et signer la charte</a>
+    </div>
+  {% endif %}
+{% else %}
+  <p>Rôles : {% for r in mes_roles %}{{ r }}{% if not forloop.last %}, {% endif %}{% empty %}aucun rôle attribué. Vos rôles viennent de vos groupes AD.{% endfor %}</p>
+  <p class="note">Lot 1 : gestion des sociétés, intervenants et versions de charte dans l'administration ; journal d'audit consultable par le RSSI et la DSI.</p>
+{% endif %}
+{% endblock %}

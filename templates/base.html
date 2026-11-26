@@ -1,0 +1,28 @@
+{% load static %}<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block titre %}Portail prestataires{% endblock %}</title>
+<link rel="stylesheet" href="{% static 'css/portail.css' %}">
+</head>
+<body>
+<header class="top">
+  <a class="marque" href="{% url 'accueil' %}">Portail prestataires</a>
+  {% if user.is_authenticated %}
+  <nav aria-label="Navigation principale">
+    {% if user.est_prestataire %}<a href="{% url 'charte:signer' %}">Ma charte</a>{% endif %}
+    {% if peut_auditer %}<a href="{% url 'audit:journal' %}">Journal d'audit</a>{% endif %}
+    {% if user.is_staff %}<a href="{% url 'admin:index' %}">Administration</a>{% endif %}
+    <span>{{ user }}</span>
+    <form method="post" action="{% url 'comptes:deconnexion' %}">{% csrf_token %}<button class="btn lien" type="submit">Se déconnecter</button></form>
+  </nav>
+  {% endif %}
+</header>
+<main class="{% block classe_main %}{% endblock %}">
+  {% if messages %}<ul class="messages">{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul>{% endif %}
+  {% block contenu %}{% endblock %}
+</main>
+{% block scripts %}{% endblock %}
+</body>
+</html>

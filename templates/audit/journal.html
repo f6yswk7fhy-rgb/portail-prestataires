@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block titre %}Journal d'audit · Portail prestataires{% endblock %}
+{% block contenu %}
+<h1>Journal d'audit</h1>
+{% if anomalies %}<p class="alerte">Chaîne d'intégrité rompue sur les entrées {{ anomalies|join:", " }}. Prévenez le RSSI.</p>
+{% else %}<p class="ok">Chaîne d'intégrité vérifiée : aucune entrée modifiée ni supprimée.</p>{% endif %}
+<table>
+<thead><tr><th>Horodatage</th><th>Acteur</th><th>Action</th><th>Objet</th><th>IP</th></tr></thead>
+<tbody>{% for e in page %}<tr><td>{{ e.horodatage|date:"d/m/Y H:i:s" }}</td><td>{{ e.acteur_libelle }}</td><td>{{ e.action }}</td><td>{{ e.objet_type }} {{ e.objet_id }}</td><td>{{ e.adresse_ip|default:"" }}</td></tr>
+{% empty %}<tr><td colspan="5">Aucune entrée.</td></tr>{% endfor %}</tbody>
+</table>
+<div class="pagination">{% if page.has_previous %}<a href="?page={{ page.previous_page_number }}">Plus récentes</a>{% endif %}{% if page.has_next %}<a href="?page={{ page.next_page_number }}">Plus anciennes</a>{% endif %}</div>
+{% endblock %}
