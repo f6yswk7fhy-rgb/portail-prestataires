@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block titre %}Habilitations · Portail prestataires{% endblock %}
+{% block contenu %}
+<div class="entete"><h1>{% if user.est_prestataire %}Mes accès{% else %}Habilitations et interventions{% endif %}</h1>
+{% if peut_creer %}<a class="btn pri" href="{% url 'acces:nouvelle' %}">Nouvelle habilitation</a>{% endif %}</div>
+
+{% if interventions_a_valider %}
+<h2>Interventions à valider</h2>
+<table><thead><tr><th>Intervenant</th><th>Motif</th><th>Créneau</th><th></th></tr></thead><tbody>
+{% for i in interventions_a_valider %}<tr>
+<td><b>{{ i.habilitation.intervenant.utilisateur }}</b><br><span class="note">{{ i.habilitation.application }} · {{ i.reference }}</span></td>
+<td>{{ i.motif }}<br><span class="note">Demandée par {{ i.demandeur }}</span></td>
+<td class="nowrap">{{ i.debut|date:"D j M H:i" }}<br><span class="note">→ {{ i.fin|date:"H:i" }}</span></td>
+<td><form method="post" action="{% url 'acces:decider_intervention' i.pk %}" class="actions">{% csrf_token %}
+<input type="text" name="motif" placeholder="Motif si refus" aria-label="Motif si refus">
+<button class="btn pri" name="decision" value="valider">Valider</button><button class="btn danger" name="decision" value="refuser">Refuser</button></form></td>
+</tr>{% endfor %}</tbody></table>
+{% endif %}
+
+{% if a_valider_rssi %}
+<h2>Habilitations à valider</h2>
+<ul class="liens">{% for h in a_valider_rssi %}<li><a href="{% url 'acces:detail' h.pk %}">{{ h.reference }} · {{ h.intervenant.utilisateur }} · {{ h.application }}</a> <span class="note">risque {{ h.get_risque_display|lower }}</span></li>{% endfor %}</ul>
+{% endif %}
+
+{% if ouvertes %}
+<h2>Accès ouverts en ce moment</h2>
+<ul class="liens">{% for i in ouvertes %}<li><a href="{% url 'acces:detail' i.habilitation_id %}">{{ i.habilitation.intervenant.utilisateur }} · {{ i.habilitation.application }}</a> <span class="note">jusqu'à {{ i.fin|date:"H:i" }}</span>{% if i.en_retard %} <span class="tag tag-revoquee">Fermeture en retard</span>{% endif %}</li>{% endfor %}</ul>
+{% endif %}
+
+<h2>Habilitations</h2>
+<table><thead><tr><th>Intervenant</th><th>Application</th><th>Statut</th><th>Fin</th></tr></thead><tbody>
+{% for h in habilitations %}<tr>
+<td><a href="{% url 'acces:detail' h.pk %}"><b>{{ h.intervenant.utilisateur }}</b></a><br><span class="note">{{ h.intervenant.societe }} · {{ h.reference }}</span></td>
+<td>{{ h.application }}</td>
+<td>{% include "acces/_statut.html" with statut=h.statut libelle=h.get_statut_display %}</td>
+<td class="nowrap">{{ h.date_fin|date:"j M Y" }}</td>
+</tr>{% empty %}<tr><td colspan="4">Aucune habilitation.</td></tr>{% endfor %}</tbody></table>
+{% endblock %}

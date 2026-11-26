@@ -3,6 +3,9 @@
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
+from django.contrib.auth.models import Group
+
+from acces.models import Application
 from charte.models import CharteVersion
 from comptes.models import Utilisateur
 from prestataires.models import Intervenant, Societe
@@ -45,9 +48,29 @@ class Command(BaseCommand):
         Intervenant.objects.get_or_create(utilisateur=u, defaults={"societe": societe})
         version, _ = CharteVersion.objects.get_or_create(numero="1.0", defaults={"contenu": TEXTE})
         version.publier(None)
+        app, _ = Application.objects.get_or_create(nom="PACS imagerie (démo)", defaults={"groupes_ad": "VPN-Presta, BT-PACS"})
+        comptes = {
+            "rssi": "RSSI",
+            "dsi": "DSI",
+            "referent": "Référent interne",
+            "pacs": None,
+            "technicien": "Référent technique",
+        }
+        for identifiant, role in comptes.items():
+            interne, cree = Utilisateur.objects.get_or_create(
+                email=f"{identifiant}@demo.invalid",
+                defaults={"first_name": identifiant.capitalize(), "type_compte": Utilisateur.Type.INTERNE},
+            )
+            if cree:
+                interne.set_password("Demo-interne-2026")
+                interne.save()
+            if role:
+                interne.groups.add(Group.objects.get(name=role))
+        app.referents_applicatifs.add(Utilisateur.objects.get(email="pacs@demo.invalid"))
         self.stdout.write(
             self.style.SUCCESS(
                 "Démo prête : connexion thomas.girard@demo.invalid / Demo-prestataire-2026 "
-                "(une application TOTP sera demandée)."
+                "(une application TOTP sera demandée). Comptes internes de démo : rssi@, dsi@, referent@, "
+                "pacs@ (référent applicatif du PACS), technicien@ (domaine demo.invalid), mot de passe Demo-interne-2026."
             )
         )

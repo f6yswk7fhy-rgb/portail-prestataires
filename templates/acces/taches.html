@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block titre %}Tâches techniques · Portail prestataires{% endblock %}
+{% block contenu %}
+<h1>{{ a_faire|length }} tâche{{ a_faire|length|pluralize }} technique{{ a_faire|length|pluralize }} à réaliser</h1>
+<p class="note">Réalisez l'action dans l'outil concerné (AD, BeyondTrust), puis confirmez-la ici. Une fermeture non confirmée à l'heure apparaît en retard pour le RSSI.</p>
+<table><thead><tr><th>Action</th><th>Intervenant</th><th>À faire avant</th><th></th></tr></thead><tbody>
+{% for t in a_faire %}<tr>
+<td><b>{{ t.get_type_display }}</b>{% if t.intervention %}<br><span class="note">{{ t.intervention.reference }} · {{ t.intervention.motif }}</span>{% endif %}</td>
+<td>{{ t.habilitation.intervenant.utilisateur }}<br><span class="note">{{ t.habilitation.intervenant.utilisateur.email }} · {{ t.habilitation.application }}</span></td>
+<td class="nowrap">{% if t.a_faire_avant %}{{ t.a_faire_avant|date:"D j M H:i" }}{% else %}Dès que possible{% endif %}</td>
+<td><form method="post" action="{% url 'acces:confirmer_tache' t.pk %}">{% csrf_token %}<button class="btn pri">C'est fait</button></form></td>
+</tr>{% empty %}<tr><td colspan="4">Rien à faire pour le moment.</td></tr>{% endfor %}</tbody></table>
+{% if faites %}<h2>Dernières tâches confirmées</h2>
+<table><tbody>{% for t in faites %}<tr><td>{{ t.faite_le|date:"j M H:i" }}</td><td>{{ t.get_type_display }}</td><td>{{ t.habilitation.intervenant.utilisateur }}</td><td>{{ t.faite_par }}</td></tr>{% endfor %}</tbody></table>{% endif %}
+{% endblock %}

@@ -8,10 +8,10 @@ Principe : **aucun accès sans charte signée, validation et date de fin**. Le c
 
 | Lot | Contenu | État |
 | --- | --- | --- |
-| 1. Socle et charte | Comptes, SSO Entra ID pour le personnel, MFA TOTP obligatoire pour les prestataires, sociétés et intervenants, invitations, versions de charte, signature simple intégrée, journal d'audit chaîné | En cours |
-| 2. Demandes et validations | Habilitations, demandes d'intervention, validation par le référent applicatif, tâches du référent technique | À venir |
-| 3. Automatisation | Ouverture et refermeture automatiques (AD, donc VPN Check Point via groupe), expirations, rappels, revues | À venir |
-| 4. Provisioning étendu | API BeyondTrust, intégration Horoquartz si possible, export SIEM | À venir |
+| 1. Socle et charte | Comptes, SSO Entra ID pour le personnel, MFA TOTP obligatoire pour les prestataires, sociétés et intervenants, invitations, versions de charte, signature simple intégrée, journal d'audit chaîné | Fait |
+| 2. Demandes et validations | Habilitations (validation RSSI, création BeyondTrust par le référent technique), demandes d'intervention (validation par le référent applicatif, d'office pour lui-même ou la DSI), tâches d'ouverture et de fermeture du compte AD, révocation | En cours |
+| 3. Automatisation | Activation et désactivation automatiques du compte AD (VPN Check Point et BeyondTrust suivent), expirations, rappels, revues | À venir |
+| 4. Extensions | Applications métier hors AD, badges Horoquartz, export SIEM | À venir |
 
 ## Rôles
 
@@ -40,14 +40,14 @@ python3 -m venv .venv && . .venv/bin/activate
 pip install -r requirements.txt
 export PORTAIL_DEBUG=1
 python manage.py migrate
-python manage.py charger_demo          # société, intervenant et charte de démonstration
+python manage.py charger_demo          # société, intervenant, charte, application et comptes de démonstration
 python manage.py createsuperuser       # compte d'administration (TOTP demandé à la connexion)
 python manage.py runserver
 ```
 
 Ouvrez http://127.0.0.1:8000. Le compte de démonstration est `thomas.girard@demo.invalid`, avec le mot de passe `Demo-prestataire-2026`. Le portail vous demande alors d'enregistrer une application d'authentification.
 
-Pour lancer les tests : `python manage.py test tests`.
+Pour lancer les tests : `python manage.py test tests`. Parcours de recette pas à pas : [docs/guide-de-test.md](docs/guide-de-test.md).
 
 ## Déployer sur un serveur interne
 
@@ -70,5 +70,6 @@ Pour lancer les tests : `python manage.py test tests`.
 | `comptes/` | Utilisateurs, SSO Entra ID, rôles, MFA, invitations |
 | `prestataires/` | Sociétés et intervenants |
 | `charte/` | Versions de charte et signatures |
+| `acces/` | Applications, habilitations, interventions, tâches techniques ; règles de workflow dans `acces/workflow.py` |
 | `audit/` | Journal d'audit chaîné |
 | `tests/` | Tests automatisés |

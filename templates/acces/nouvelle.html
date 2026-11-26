@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block titre %}Nouvelle habilitation · Portail prestataires{% endblock %}
+{% block contenu %}
+<h1>Nouvelle habilitation</h1>
+<p class="note">Si l'intervenant n'a pas encore de compte, il reçoit une invitation pour le créer avec MFA et signer la charte. Après accord du RSSI, son compte existe mais reste désactivé.</p>
+<form method="post" novalidate class="carte">{% csrf_token %}
+{% if form.non_field_errors %}<p class="alerte">{{ form.non_field_errors|join:" " }}</p>{% endif %}
+{% for champ in form %}<div class="champ">{{ champ.label_tag }}{{ champ }}{{ champ.errors }}</div>{% endfor %}
+<button class="btn pri" type="submit">Créer l'habilitation</button>
+</form>
+{% endblock %}

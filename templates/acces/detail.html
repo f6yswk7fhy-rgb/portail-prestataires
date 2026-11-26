@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block titre %}{{ h.reference }} · Portail prestataires{% endblock %}
+{% block contenu %}
+<p class="note"><a href="{% url 'acces:liste' %}">← Habilitations</a></p>
+<div class="entete"><h1>{{ h.intervenant.utilisateur }} · {{ h.application }}</h1>{% include "acces/_statut.html" with statut=h.statut libelle=h.get_statut_display %}</div>
+<div class="carte douce">
+<p>{{ h.intervenant.societe }} · {{ h.reference }} · risque {{ h.get_risque_display|lower }} · fin le {{ h.date_fin|date:"j F Y" }}</p>
+<p>Demandée par {{ h.referent_interne }} : {{ h.justification }}</p>
+{% if h.validee_par %}<p class="note">Décision de {{ h.validee_par }} le {{ h.validee_le|date:"j F Y H:i" }}{% if h.motif_decision %} : {{ h.motif_decision }}{% endif %}</p>{% endif %}
+{% if h.statut == "attente_charte" %}<p class="note">En attente de la signature de la charte par l'intervenant.</p>{% endif %}
+{% if h.statut == "preparation" %}<p class="note">Le référent technique doit créer le compte dans BeyondTrust.</p>{% endif %}
+</div>
+
+{% if peut_decider %}
+<form method="post" action="{% url 'acces:decider_habilitation' h.pk %}" class="carte">{% csrf_token %}
+<h2>Décision RSSI</h2>
+<div class="champ">{{ form_motif.motif.label_tag }}{{ form_motif.motif }}<span class="note">Obligatoire en cas de refus.</span></div>
+<button class="btn pri" name="decision" value="valider">Valider l'habilitation</button> <button class="btn danger" name="decision" value="refuser">Refuser</button>
+</form>
+{% endif %}
+
+{% if peut_demander %}
+<form method="post" action="{% url 'acces:demander_intervention' h.pk %}" class="carte">{% csrf_token %}
+<h2>{% if validation_d_office %}Ouvrir pour une intervention{% else %}Demander une intervention{% endif %}</h2>
+<p class="note">{% if validation_d_office %}Votre demande vaut validation : le référent technique est prévenu immédiatement.{% else %}La demande part au référent applicatif de {{ h.application }}.{% endif %}</p>
+{% for champ in form_intervention %}<div class="champ">{{ champ.label_tag }}{{ champ }}</div>{% endfor %}
+<button class="btn pri" type="submit">Envoyer</button>
+</form>
+{% endif %}
+
+<h2>Interventions</h2>
+<table><thead><tr><th>Motif</th><th>Créneau</th><th>Statut</th><th></th></tr></thead><tbody>
+{% for i in interventions %}<tr>
+<td>{{ i.motif }}<br><span class="note">{{ i.reference }} · demandée par {{ i.demandeur }}</span>{% if i.motif_decision %}<br><span class="note">Motif : {{ i.motif_decision }}</span>{% endif %}</td>
+<td class="nowrap">{{ i.debut|date:"D j M H:i" }}<br><span class="note">→ {{ i.fin|date:"H:i" }}</span></td>
+<td>{% include "acces/_statut.html" with statut=i.statut libelle=i.get_statut_display %}{% if i.en_retard %} <span class="tag tag-revoquee">En retard</span>{% endif %}</td>
+<td>{% if i.statut == "ouverte" %}<form method="post" action="{% url 'acces:fermer' i.pk %}">{% csrf_token %}<button class="btn danger">Fermer maintenant</button></form>{% endif %}
+{% if i.statut == "demandee" %}<form method="post" action="{% url 'acces:decider_intervention' i.pk %}" class="actions">{% csrf_token %}<input type="hidden" name="retour" value="detail"><input type="text" name="motif" placeholder="Motif si refus" aria-label="Motif si refus"><button class="btn pri" name="decision" value="valider">Valider</button><button class="btn danger" name="decision" value="refuser">Refuser</button></form>{% endif %}</td>
+</tr>{% empty %}<tr><td colspan="4">Aucune intervention.</td></tr>{% endfor %}</tbody></table>
+
+{% if peut_revoquer %}
+<form method="post" action="{% url 'acces:revoquer' h.pk %}" class="carte zone-danger">{% csrf_token %}
+<h2>Révocation</h2>
+<p class="note">Clôt l'habilitation, annule les demandes en cours et demande la fermeture immédiate d'un accès ouvert.</p>
+<div class="champ"><label for="motif-revocation">Motif (obligatoire)</label><input type="text" id="motif-revocation" name="motif" required></div>
+<button class="btn danger">Révoquer l'habilitation</button>
+</form>
+{% endif %}
+{% endblock %}

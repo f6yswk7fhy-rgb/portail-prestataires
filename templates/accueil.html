@@ -8,7 +8,7 @@
     <p class="note">Aucune charte n'est en vigueur pour le moment.</p>
   {% elif a_signe %}
     <div class="ok">Vous avez signé la charte v{{ version.numero }} en vigueur.</div>
-    <p class="note">Les demandes d'accès et d'intervention arriveront dans une prochaine version du portail.</p>
+    <p><a class="btn pri" href="{% url 'acces:liste' %}">Voir mes accès et demander une intervention</a></p>
   {% else %}
     <div class="carte douce">
       <h2>Signature de la charte requise</h2>
@@ -18,6 +18,6 @@
   {% endif %}
 {% else %}
   <p>Rôles : {% for r in mes_roles %}{{ r }}{% if not forloop.last %}, {% endif %}{% empty %}aucun rôle attribué. Vos rôles viennent de vos groupes AD.{% endfor %}</p>
-  <p class="note">Lot 1 : gestion des sociétés, intervenants et versions de charte dans l'administration ; journal d'audit consultable par le RSSI et la DSI.</p>
+  <p><a class="btn pri" href="{% url 'acces:liste' %}">Habilitations et interventions</a>{% if "Référent technique" in mes_roles %} <a class="btn" href="{% url 'acces:taches' %}">Tâches techniques</a>{% endif %}</p>
 {% endif %}
 {% endblock %}

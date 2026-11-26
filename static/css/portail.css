@@ -31,3 +31,16 @@ table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;colo
 .ok{background:var(--mist);color:var(--green);padding:12px 16px;border-radius:8px;margin-bottom:16px}
 .sso{margin-top:24px;padding-top:24px;border-top:1px solid var(--line)}
 .pagination{display:flex;gap:12px;margin-top:16px}
+.entete{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+h2{font-size:20px;margin-top:32px}
+.nowrap{white-space:nowrap}
+.btn.danger{color:var(--red);border-color:var(--red)}
+.actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.actions input{min-height:40px;max-width:180px}
+.tag{display:inline-block;padding:3px 10px;border-radius:999px;font-size:13px;font-weight:500;white-space:nowrap;background:var(--panel);color:var(--muted)}
+.tag-ouverte,.tag-dormante{background:var(--mist);color:var(--green)}
+.tag-en_validation,.tag-demandee,.tag-a_ouvrir,.tag-preparation{background:light-dark(#e8f0fb,#14223a);color:var(--blue)}
+.tag-attente_charte{background:light-dark(#fff4dc,#2b2210);color:light-dark(#9a6200,#f2b84b)}
+.tag-refusee,.tag-revoquee{background:var(--redbg);color:var(--red)}
+.liens{padding-left:20px;line-height:1.9}
+.zone-danger{border-color:var(--red);margin-top:32px}
+select,textarea,input[type=date],input[type=datetime-local]{font:16px system-ui,sans-serif;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);min-height:44px;width:100%}

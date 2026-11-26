@@ -59,6 +59,9 @@ def signer(request):
                 objet=signature,
                 details={"empreinte_document": signature.empreinte_document, "preuve": signature.preuve},
             )
+            from acces.workflow import apres_signature
+
+            apres_signature(request, intervenant)
             messages.success(request, f"Charte v{version.numero} signée.")
             return redirect("charte:signer")
 
