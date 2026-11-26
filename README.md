@@ -47,7 +47,7 @@ python manage.py runserver
 
 Ouvrez http://127.0.0.1:8000. Le compte de démonstration est `thomas.girard@demo.invalid`, avec le mot de passe `Demo-prestataire-2026`. Le portail vous demande alors d'enregistrer une application d'authentification.
 
-Pour lancer les tests : `python manage.py test tests`.
+Pour lancer les tests : `python manage.py test tests`. Parcours de recette pas à pas : [docs/guide-de-test.md](docs/guide-de-test.md).
 
 ## Déployer sur un serveur interne
 
