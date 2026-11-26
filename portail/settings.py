@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "comptes",
     "prestataires",
     "charte",
+    "acces",
 ]
 
 MIDDLEWARE = [
