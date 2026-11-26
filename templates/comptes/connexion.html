@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block titre %}Connexion · Portail prestataires{% endblock %}
+{% block classe_main %}etroit{% endblock %}
+{% block contenu %}
+<h1>Connexion</h1>
+<form method="post" novalidate>{% csrf_token %}
+  {% if form.non_field_errors %}<p class="alerte">Adresse email ou mot de passe incorrect.</p>{% endif %}
+  <div class="champ"><label for="id_username">Adresse email</label><input type="email" name="username" id="id_username" autocomplete="username" required value="{{ form.username.value|default:'' }}"></div>
+  <div class="champ"><label for="id_password">Mot de passe</label><input type="password" name="password" id="id_password" autocomplete="current-password" required></div>
+  <input type="hidden" name="next" value="{{ next }}">
+  <button class="btn pri" type="submit">Continuer</button>
+  <p class="note">Prestataires : un code de votre application d'authentification vous sera demandé ensuite.</p>
+</form>
+{% if sso_actif %}
+<div class="sso"><p class="note">Personnel de l'établissement</p><a class="btn" href="{% url 'oidc_authentication_init' %}">Se connecter avec le compte de l'établissement (Entra ID)</a></div>
+{% endif %}
+{% endblock %}

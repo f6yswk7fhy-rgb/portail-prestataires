@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block titre %}Activation du compte · Portail prestataires{% endblock %}
+{% block classe_main %}etroit{% endblock %}
+{% block contenu %}
+<h1>Bienvenue {{ utilisateur.first_name }}</h1>
+<p>Choisissez votre mot de passe (12 caractères minimum). Vous configurerez ensuite votre application d'authentification.</p>
+<form method="post" novalidate>{% csrf_token %}
+  <div class="champ">{{ form.new_password1.label_tag }}{{ form.new_password1 }}{{ form.new_password1.errors }}</div>
+  <div class="champ">{{ form.new_password2.label_tag }}{{ form.new_password2 }}{{ form.new_password2.errors }}</div>
+  <button class="btn pri" type="submit">Enregistrer</button>
+</form>
+{% endblock %}

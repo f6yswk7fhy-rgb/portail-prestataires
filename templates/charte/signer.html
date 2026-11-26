@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+{% block titre %}Charte v{{ version.numero }} · Portail prestataires{% endblock %}
+{% block contenu %}
+<h1>{{ version.titre }}</h1>
+<p class="note">Version {{ version.numero }} · en vigueur depuis le {{ version.publiee_le|date:"j F Y" }} · empreinte <span class="hash">{{ version.empreinte }}</span></p>
+<div class="charte-texte" id="charte-texte" tabindex="0">{% for p in paragraphes %}<p>{{ p|linebreaksbr }}</p>{% endfor %}</div>
+<form method="post" novalidate>{% csrf_token %}
+  <div class="champ case">{{ form.engagement }}{{ form.engagement.label_tag }}</div>
+  <p class="note" id="aide-lecture">Faites défiler la charte jusqu'au bout pour pouvoir cocher l'engagement.</p>
+  {{ form.engagement.errors }}
+  <div class="champ">{{ form.code.label_tag }}{{ form.code }}{{ form.code.errors }}</div>
+  <button class="btn pri" type="submit">Signer la charte</button>
+</form>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/charte.js' %}"></script>{% endblock %}
